@@ -78,7 +78,7 @@ type Info struct {
 	Error           string
 	Parent          string
 	SectorSize      int64
-	BackingFileName string
+	BackingFilePath string
 	BackingFile     *BackingFile `json:"-"`
 }
 
@@ -94,7 +94,7 @@ type disk struct {
 type BackingFile struct {
 	Size       int64
 	SectorSize int64
-	Name       string
+	Path       string
 	Disk       types.DiffDisk
 }
 
@@ -155,16 +155,19 @@ func construct(readonly bool, size, sectorSize int64, dir, head string, backingF
 	}
 	r.info.Size = size
 	r.info.SectorSize = sectorSize
-	r.info.BackingFile = backingFile
-	if backingFile != nil {
-		r.info.BackingFileName = backingFile.Name
-	}
 	r.volume.sectorSize = defaultSectorSize
 
 	// Scan all the disks to build the disk map
 	exists, err := r.readMetadata()
 	if err != nil {
 		return nil, err
+	}
+
+	// The backing file path can be changed, need to update it after loading
+	// the meta data.
+	r.info.BackingFile = backingFile
+	if backingFile != nil {
+		r.info.BackingFilePath = backingFile.Path
 	}
 
 	if !r.revisionCounterDisabled {
@@ -295,7 +298,7 @@ func (r *Replica) insertBackingFile() {
 		return
 	}
 
-	d := disk{Name: r.info.BackingFile.Name}
+	d := disk{Name: r.info.BackingFile.Path}
 	r.activeDiskData = append([]*disk{{}, &d}, r.activeDiskData[1:]...)
 	r.volume.files = append([]types.DiffDisk{nil, r.info.BackingFile.Disk}, r.volume.files[1:]...)
 	r.diskData[d.Name] = &d
@@ -1017,7 +1020,7 @@ func (r *Replica) Delete() error {
 	defer r.Unlock()
 
 	for name := range r.diskData {
-		if name != r.info.BackingFileName {
+		if name != r.info.BackingFilePath {
 			r.rmDisk(name)
 		}
 	}

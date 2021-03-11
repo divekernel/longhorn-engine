@@ -58,11 +58,13 @@ github.com/gorilla/handlers
 github.com/gorilla/mux
 # github.com/gorilla/websocket v1.4.0
 github.com/gorilla/websocket
+# github.com/honestbee/jobq v1.0.2
+github.com/honestbee/jobq
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
 github.com/konsorten/go-windows-terminal-sequences
-# github.com/longhorn/backupstore v0.0.0-20201203004625-fdbdd88b09d6
+# github.com/longhorn/backupstore v0.0.0-20210304124311-0aee37c899e2
 github.com/longhorn/backupstore
 github.com/longhorn/backupstore/cmd
 github.com/longhorn/backupstore/fsops
@@ -72,7 +74,7 @@ github.com/longhorn/backupstore/nfs
 github.com/longhorn/backupstore/s3
 github.com/longhorn/backupstore/util
 github.com/longhorn/backupstore/vfs
-# github.com/longhorn/go-iscsi-helper v0.0.0-20201111045018-ee87992ec536
+# github.com/longhorn/go-iscsi-helper v0.0.0-20210304120829-4c21e728023b
 github.com/longhorn/go-iscsi-helper/iscsi
 github.com/longhorn/go-iscsi-helper/iscsidev
 github.com/longhorn/go-iscsi-helper/longhorndev

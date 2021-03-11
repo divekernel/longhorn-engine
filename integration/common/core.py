@@ -21,7 +21,7 @@ from common.constants import (
     LONGHORN_BINARY, LONGHORN_UPGRADE_BINARY, LONGHORN_DEV_DIR,
     VOLUME_NAME, VOLUME_BACKING_NAME,
     SIZE, PAGE_SIZE, SIZE_STR,
-    BACKUP_DIR, BACKING_FILE,
+    BACKUP_DIR, BACKING_FILE_RAW,
     FRONTEND_TGT_BLOCKDEV,
     RETRY_COUNTS, RETRY_INTERVAL, RETRY_COUNTS2,
     RETRY_COUNTS_SHORT, RETRY_INTERVAL_SHORT,
@@ -430,11 +430,17 @@ def reset_volume(grpc_c, *grpc_r_list):
     return v
 
 
-def create_backup(url, snap, backup_target, volume_size=SIZE_STR):
-    backup = cmd.backup_create(url, snap, backup_target)
+def create_backup(url, snap, backup_target, volume_size=SIZE_STR,
+                  backing_image_name="", backing_image_url=""):
+    backup = cmd.backup_create(url, snap, backup_target,
+                               [], backing_image_name, backing_image_url)
     backup_info = cmd.backup_inspect(url, backup)
     assert backup_info["URL"] == backup
     assert backup_info["VolumeSize"] == volume_size
+    if backing_image_name != "":
+        assert backup_info["VolumeBackingImageName"] == backing_image_name
+    if backing_image_url != "":
+        assert backup_info["VolumeBackingImageURL"] == backing_image_url
     assert snap in backup_info["SnapshotName"]
     return backup_info
 
@@ -533,7 +539,7 @@ def prepare_backup_dir(backup_dir):
 
 
 def read_from_backing_file(offset, length):
-    p = _file(BACKING_FILE)
+    p = _file(BACKING_FILE_RAW)
     return read_file(p, offset, length)
 
 
